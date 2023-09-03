@@ -82,6 +82,8 @@ void GeneraCondicionInicial(double Masa, double Kresorte, double & x0,
   do{
     double r = ran64.r();
     x0=(ran64.r())*XmaxResorte + XminResorte; //Acotado POR XmaxResorte    
+    Px0=(ran64.r())*sqrt(2*Masa*(Enmin));
+    E=(Px0*Px0/Masa+Kresorte*x0*x0)/2;
     if (E>Enmin && E<(Enmin+deltaE)) Fuera=false;
   }while(Fuera);
 }
