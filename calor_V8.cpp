@@ -76,16 +76,12 @@ void TermineCuadro(void){
   //	cout << "pause 10" << endl;
 }
 void GeneraCondicionInicial(double Masa, double Kresorte, double & x0,
-			    double & Px0, double XmaxResorte, double PmaxResorte, 
+			    double & Px0, double XminResorte, double XmaxResorte, 
 			    double Enmin, double deltaE, Crandom & ran64, int i){
   bool Fuera=true; double E; 
   do{
     double r = ran64.r();
-    x0=(2*ran64.r()-1)*XmaxResorte; //Acotado POR XmaxResorte
-    Px0=(2*ran64.r()-1)*PmaxResorte;//Acotado POR PmaxResorte
-    E=(Px0*Px0/Masa+Kresorte*x0*x0)/2;//(Px0*Px0/Masa+Kresorte*x0*x0)/4                        
-    cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
-    
+    x0=(ran64.r())*XmaxResorte + XminResorte; //Acotado POR XmaxResorte    
     if (E>Enmin && E<(Enmin+deltaE)) Fuera=false;
   }while(Fuera);
 }
@@ -104,6 +100,7 @@ int main(void){
   double OmegaResorte=sqrt(MResorte/KResorte);
   double Emin=10, DeltaE=4.0,
     Xmax=sqrt(2*(Emin+DeltaE)/KResorte), Pmax=sqrt(2*MResorte*(Emin+DeltaE));
+  double Xmin= sqrt(2*Emin/KResorte);
   double XResorte,PResorte,VResorte,xs;
   
   
@@ -113,7 +110,7 @@ int main(void){
   for(i=0; i<N; i++){
     //-----------------(x0,Vx0,k0      ,m0  ,R0);
     GeneraCondicionInicial(MResorte, KResorte, XResorte, PResorte,
-			   Xmax, Pmax, Emin, DeltaE, ran64,i);
+			   Xmin, Xmax, Emin, DeltaE, ran64,i);
     VResorte=PResorte/MResorte;
     Resorte[i].Inicie(XResorte, VResorte, KResorte, MResorte, 0.05, GammaResorte);
   }
