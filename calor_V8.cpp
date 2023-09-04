@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cmath>
-#include "Vector.h"
 #include "Random64.h"
 
 using namespace std;
@@ -22,7 +21,7 @@ public:
   void CalculeFuerza(double xs);
   void Mueva_r(double dt,double CTE);
   void Mueva_V(double dt,double CTE);
-  void Dibujese(void);
+  void Dibujese(int t);
   double Getx(void){return x;};
   double GetPx(void){return m*Vx;};
 };	
@@ -38,8 +37,8 @@ void Cuerpo::Mueva_r(double dt,double CTE){
 void Cuerpo::Mueva_V(double dt,double CTE){
   Vx+=Fx*(CTE*dt/m);
 }
-void Cuerpo::Dibujese(void){
-  cout<<", "<<x<<"+"<<R<<"*cos(t),"<<m*Vx<<"+"<<R<<"*sin(t)";
+void Cuerpo::Dibujese(int t){
+  cout<<"; ("<<x+R*cos(t)<<", "<<m*Vx + R*sin(t)<<")";
 }
 //---------------------- CLASE RANDOM THERMALBATH ----------------------------
 class ThermalBath{
@@ -84,7 +83,7 @@ void GeneraCondicionInicial(double Masa, double Kresorte, double & x0,
     x0=(2*ran64.r()-1)*XmaxResorte; //Acotado POR XmaxResorte
     Px0=(2*ran64.r()-1)*PmaxResorte;//Acotado POR PmaxResorte
     E=(Px0*Px0/Masa+Kresorte*x0*x0)/2;//(Px0*Px0/Masa+Kresorte*x0*x0)/4                        
-    cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
+    //cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
     
     if (E>Enmin && E<(Enmin+deltaE)) Fuera=false;
   }while(Fuera);
@@ -117,7 +116,7 @@ int main(void){
     VResorte=PResorte/MResorte;
     Resorte[i].Inicie(XResorte, VResorte, KResorte, MResorte, 0.05, GammaResorte);
   }
-  /*
+  
   // EL BANHO TERMICO
   ThermalBath Entorno;
   double KBTBanho=1.0, KBanho=1.0;
@@ -132,53 +131,60 @@ int main(void){
   
   //CORRER LA SIMULACION
   //Inicie Animación
-  InicieAnimacion(Xmax, Pmax);
+  //InicieAnimacion(Xmax, Pmax);
 
   //Graficar estático para ver la condición inicial microcanónica estática
+  
   for(t=0,tdibujo=0; t<tmax; t+=Deltat,tdibujo+=Deltat){
     //Graficar
     if(tdibujo > tmax/ndibujos){
       InicieCuadro();
-      for(i=0; i<N; i++){Resorte[i].Dibujese();}
+      for(i=0; i<N; i++){Resorte[i].Dibujese(t);}
       TermineCuadro();
       tdibujo=0;
+      cout<<endl;
+
     }
   }
+ 
   //AHORA SÍ, CORRE LA SIMULACIÓN 
   //Multiplicar los resortes
   for(c_multiplicar=0;c_multiplicar<N_multiplicar;c_multiplicar++){
-    for(cM=1;cM<NM;cM++)
-      for(i=0; i<N; i++)
-	Resorte[i+cM*N]=Resorte[i];
+    for(cM=1;cM<NM;cM++){
+      for(i=0; i<N; i++){
+        //cout<<i+cM*N<<" "<<i<<" "<<cM<<endl;
+	      Resorte[i+cM*N]=Resorte[i];
+      }
+    }
     N=NM*N;
-    
+     
     //Correr tmax con ese número de resortes
     for(t=0,tdibujo=0; t<tmax; t+=Deltat,tdibujo+=Deltat){
       //Graficar
       
       if(tdibujo > tmax/ndibujos){
-	InicieCuadro();
-	for(i=0; i<N; i++){Resorte[i].Dibujese();}
-	TermineCuadro();
-	tdibujo=0;
+        InicieCuadro();
+        for(i=0; i<N; i++){Resorte[i].Dibujese(t);}
+        TermineCuadro();
+        tdibujo=0;
       }
       
       // Evolucionar los resortes
       if(t>0){ //para que inicie quieto
-	for(i=0; i<N; i++){
-	  // Para cada resorte calcular el valor de xs impuesto por el banho termico
-	  xs=Entorno.Getx(ran64);
-	  //Con este valor, mover el resorte por PEFRL
-	  Resorte[i].Mueva_r(Deltat,CHI);
-	  Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,uno_m2LAMBDA_S2);
-	  Resorte[i].Mueva_r(Deltat,XI);
-	  Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,LAMBDA); 
-	  Resorte[i].Mueva_r(Deltat,uno_m2_XIplusCHI);
-	  Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,LAMBDA); 
-	  Resorte[i].Mueva_r(Deltat,XI);
-	  Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,uno_m2LAMBDA_S2);
-	  Resorte[i].Mueva_r(Deltat,CHI);
-	}
+        for(i=0; i<N; i++){
+          // Para cada resorte calcular el valor de xs impuesto por el banho termico
+          xs=Entorno.Getx(ran64);
+          //Con este valor, mover el resorte por PEFRL
+          Resorte[i].Mueva_r(Deltat,CHI);
+          Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,uno_m2LAMBDA_S2);
+          Resorte[i].Mueva_r(Deltat,XI);
+          Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,LAMBDA); 
+          Resorte[i].Mueva_r(Deltat,uno_m2_XIplusCHI);
+          Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,LAMBDA); 
+          Resorte[i].Mueva_r(Deltat,XI);
+          Resorte[i].CalculeFuerza(xs); Resorte[i].Mueva_V(Deltat,uno_m2LAMBDA_S2);
+          Resorte[i].Mueva_r(Deltat,CHI);
+        }
       }
     }
   }
