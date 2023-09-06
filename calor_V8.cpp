@@ -58,8 +58,8 @@ double ThermalBath::Getx(Crandom & ran64){
 
 //------------------------- FUNCIONES GLOBALES -------------------------
 void InicieAnimacion(double XmaxResorte, double PmaxResorte){
-  //  cout<<"set terminal gif animate"<<endl; 
-  //  cout<<"set output 'PeliculaTrabajo.gif'"<<endl;
+  cout<<"set terminal gif animate"<<endl; 
+  cout<<"set output 'PeliculaCalor.gif'"<<endl;
   cout<<"unset key"<<endl;
   cout<<"set xrange ["<<-5.0*XmaxResorte<<":"<<5.0*XmaxResorte<<"]"<<endl;
   cout<<"set yrange ["<<-5.0*PmaxResorte<<":"<<5.0*PmaxResorte<<"]"<<endl;
@@ -84,7 +84,7 @@ void GeneraCondicionInicial(double Masa, double Kresorte, double & x0,
     x0=(2*ran64.r()-1)*XmaxResorte; //Acotado POR XmaxResorte
     Px0=(2*ran64.r()-1)*PmaxResorte;//Acotado POR PmaxResorte
     E=(Px0*Px0/Masa+Kresorte*x0*x0)/2;//(Px0*Px0/Masa+Kresorte*x0*x0)/4                        
-    cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
+    //cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
     
     if (E>Enmin && E<(Enmin+deltaE)) Fuera=false;
   }while(Fuera);
@@ -96,7 +96,7 @@ int main(void){
   //-------------------------Definir e Iniciar Variables
   // EL NUMERO INICIAL DE OSCILADORES
   // EL GENERADOR ALEATORIO
-  Crandom ran64(0);
+  Crandom ran64(5);
   /**/
   //  LOS RESORTES
   Cuerpo Resorte[Nmax];
@@ -117,7 +117,7 @@ int main(void){
     VResorte=PResorte/MResorte;
     Resorte[i].Inicie(XResorte, VResorte, KResorte, MResorte, 0.05, GammaResorte);
   }
-  /*
+  
   // EL BANHO TERMICO
   ThermalBath Entorno;
   double KBTBanho=1.0, KBanho=1.0;
