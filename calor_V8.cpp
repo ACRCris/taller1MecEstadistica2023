@@ -84,7 +84,7 @@ void GeneraCondicionInicial(double Masa, double Kresorte, double & x0,
     x0=(2*ran64.r()-1)*XmaxResorte; //Acotado POR XmaxResorte
     Px0=(2*ran64.r()-1)*PmaxResorte;//Acotado POR PmaxResorte
     E=(Px0*Px0/Masa+Kresorte*x0*x0)/2;//(Px0*Px0/Masa+Kresorte*x0*x0)/4                        
-    cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
+    //cout<<"iteracion "<<i<<"; r "<<r<<"; 2r "<<2*r<<"; 2r - 1 "<<2*r - 1<<"; x0 "<<x0<<"; Px0 "<<Px0<<"; Energia "<<Enmin<<" "<<E<<" "<<(Enmin+deltaE)<<endl;
     
     if (E>Enmin && E<(Enmin+deltaE)) Fuera=false;
   }while(Fuera);
@@ -104,17 +104,14 @@ int main(void){
   Cuerpo Resorte[Nmax];
   double MResorte=1.0, KResorte=1.0;
   //array de GammaResortes
-  double GammaResortes[5] = {4.0/60000.0, 4.0/30000.0, 4.0/15000.0, 4.0/7500.0, 4.0/3750.0};
   double OmegaResorte=sqrt(MResorte/KResorte);
   double Emin=10, DeltaE=4.0,
     Xmax=sqrt(2*(Emin+DeltaE)/KResorte), Pmax=sqrt(2*MResorte*(Emin+DeltaE));
   double XResorte,PResorte,VResorte,xs;
-  
-  for (int k = 0; k < 5; k++)
-  {
-    double GammaResorte=GammaResortes[k];
+  double GammaResorte= 4/30000.0;
 
-    int i;
+  
+  int i;
   int N=30;
   for(i=0; i<N; i++){
     //-----------------(x0,Vx0,k0      ,m0  ,R0);
@@ -193,7 +190,7 @@ int main(void){
     }
   }
   //IMPRIMIR
-  
+  /*
     //Calcular la desviación estándar en x
   double xprom,x2prom,sigma_x;
   //Calculo xprom
@@ -228,14 +225,13 @@ int main(void){
   cout<<"sigma_p(computacional)="<<sigma_p<<endl;
 
 
-    /* code */
-  }
+  */
   
   
   
-  /*
+  
   for(i=0; i<N; i++)
     cout<<Resorte[i].Getx()<<endl;
-  */
+  
   return 0;
 }
