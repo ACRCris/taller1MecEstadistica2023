@@ -106,7 +106,6 @@ int main(void){
   double XResorte,PResorte,VResorte,xs;
   
   
-  cout<<" xmax "<<Xmax<<" pmax "<<Pmax<<endl;
   int i;
   int N=30;
   for(i=0; i<N; i++){
