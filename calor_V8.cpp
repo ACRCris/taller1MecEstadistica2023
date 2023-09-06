@@ -96,19 +96,25 @@ int main(void){
   //-------------------------Definir e Iniciar Variables
   // EL NUMERO INICIAL DE OSCILADORES
   // EL GENERADOR ALEATORIO
+
+  
   Crandom ran64(0);
   /**/
   //  LOS RESORTES
   Cuerpo Resorte[Nmax];
-  double MResorte=1.0, KResorte=1.0, GammaResorte=4.0/30000;
+  double MResorte=1.0, KResorte=1.0;
+  //array de GammaResortes
+  double GammaResortes[5] = {4.0/60000.0, 4.0/30000.0, 4.0/15000.0, 4.0/7500.0, 4.0/3750.0};
   double OmegaResorte=sqrt(MResorte/KResorte);
   double Emin=10, DeltaE=4.0,
     Xmax=sqrt(2*(Emin+DeltaE)/KResorte), Pmax=sqrt(2*MResorte*(Emin+DeltaE));
   double XResorte,PResorte,VResorte,xs;
   
-  
-  cout<<" xmax "<<Xmax<<" pmax "<<Pmax<<endl;
-  int i;
+  for (int k = 0; k < 5; k++)
+  {
+    double GammaResorte=GammaResortes[k];
+
+    int i;
   int N=30;
   for(i=0; i<N; i++){
     //-----------------(x0,Vx0,k0      ,m0  ,R0);
@@ -117,7 +123,7 @@ int main(void){
     VResorte=PResorte/MResorte;
     Resorte[i].Inicie(XResorte, VResorte, KResorte, MResorte, 0.05, GammaResorte);
   }
-  /*
+  
   // EL BANHO TERMICO
   ThermalBath Entorno;
   double KBTBanho=1.0, KBanho=1.0;
@@ -138,9 +144,11 @@ int main(void){
   for(t=0,tdibujo=0; t<tmax; t+=Deltat,tdibujo+=Deltat){
     //Graficar
     if(tdibujo > tmax/ndibujos){
-      InicieCuadro();
-      for(i=0; i<N; i++){Resorte[i].Dibujese();}
-      TermineCuadro();
+      //InicieCuadro();
+      for(i=0; i<N; i++){
+        //Resorte[i].Dibujese();
+        }
+      //TermineCuadro();
       tdibujo=0;
     }
   }
@@ -149,7 +157,7 @@ int main(void){
   for(c_multiplicar=0;c_multiplicar<N_multiplicar;c_multiplicar++){
     for(cM=1;cM<NM;cM++)
       for(i=0; i<N; i++)
-	Resorte[i+cM*N]=Resorte[i];
+	      Resorte[i+cM*N]=Resorte[i];
     N=NM*N;
     
     //Correr tmax con ese número de resortes
@@ -157,14 +165,16 @@ int main(void){
       //Graficar
       
       if(tdibujo > tmax/ndibujos){
-	InicieCuadro();
-	for(i=0; i<N; i++){Resorte[i].Dibujese();}
-	TermineCuadro();
+	//InicieCuadro();
+	for(i=0; i<N; i++){
+    //Resorte[i].Dibujese();
+    }
+	//TermineCuadro();
 	tdibujo=0;
       }
       
       // Evolucionar los resortes
-      if(t>0){ //para que inicie quieto
+    if(t>0){ //para que inicie quieto
 	for(i=0; i<N; i++){
 	  // Para cada resorte calcular el valor de xs impuesto por el banho termico
 	  xs=Entorno.Getx(ran64);
@@ -183,7 +193,7 @@ int main(void){
     }
   }
   //IMPRIMIR
-  /*
+  
     //Calcular la desviación estándar en x
   double xprom,x2prom,sigma_x;
   //Calculo xprom
@@ -200,6 +210,7 @@ int main(void){
   cout<<"sigma_x(computacional)="<<sigma_x<<endl;
 
   
+  
   //Calcular la desviación estándar en xp
   double pprom,p2prom,sigma_p;
   //Calculo xprom
@@ -207,6 +218,7 @@ int main(void){
     pprom+=Resorte[i].GetPx();
   pprom/=N;
   //Calculo x2prom
+  
   for(p2prom=0,i=0; i<N; i++)
     p2prom+=pow(Resorte[i].GetPx(),2.0);
   p2prom/=N;
@@ -215,7 +227,12 @@ int main(void){
   //Imprimir sigma_p
   cout<<"sigma_p(computacional)="<<sigma_p<<endl;
 
-*/
+
+    /* code */
+  }
+  
+  
+  
   /*
   for(i=0; i<N; i++)
     cout<<Resorte[i].Getx()<<endl;
